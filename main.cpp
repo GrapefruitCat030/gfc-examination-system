@@ -16,16 +16,14 @@ void menu();
 
 // Classes
 // Abstract Class
-class first
-{
+class first {
 public:
 	// pure virtual Function
 	virtual void log() = 0;
 };
 
 // Login function
-class auth
-{
+class auth {
 protected:
 	string username;
 	string pass;
@@ -49,8 +47,7 @@ public:
 };
 
 // Check the existence of user
-class check
-{
+class check {
 private:
 	string student_name;
 	string student_email;
@@ -141,8 +138,7 @@ public:
 	}
 };
 
-class paper
-{
+class paper {
 private:
 	int each_marks;
 	int total_marks = 0;
@@ -204,8 +200,7 @@ public:
 	}
 };
 
-class date_sheet
-{
+class date_sheet {
 protected:
 	string s;
 	int d, m, y;
@@ -233,8 +228,7 @@ public:
 	}
 };
 
-class admin : public first, public auth, public check, public date_sheet 
-{
+class admin : public first, public auth, public check, public date_sheet {
 private:
 	// admin credentials:
 	const string admin_username = "admin";
@@ -680,8 +674,7 @@ public:
 	}
 };
 
-void menu()
-{
+void menu() {
 	first *obj;
 	int choice;
 	int ret;
