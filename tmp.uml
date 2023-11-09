@@ -1,0 +1,269 @@
+@startuml
+
+class ExamSystemService {
+  - db_service_: DataBaseService
+  - log_service_: LogService
+  - authentic_: Authentication
+  - user_: User
+}
+
+class User {
+  - db_service_: DataBaseService&
+  - log_service_: LogService&
+  - user_id_: int
+  - user_name_: string
+}
+
+class AdminService extends User {
+  - userManagement: UserManagement
+  - scheduleServiceAdmin: IScheduleServiceAdmin
+}
+
+class TeacherService extends User {
+  - scheduleServiceTeacher: IScheduleServiceTeacher
+  - questionBank: IQuestionBank
+  - paperBank: IPaperBank
+  - answerBankTeacher: IAnswerBankTeacher
+}
+
+class StudentService extends User {
+  - scheduleServiceStudent: IScheduleServiceStudent
+  - answerBankStudent: IAnswerBankStudent
+}
+
+class Authentication {
+  - db_service_: DataBaseService&
+  - log_service_: LogService&
+  + Login()
+}
+
+interface IScheduleServiceAdmin {
+  + CheckScheduleRequest()
+  + AddSchedule()
+  + ViewSchedule()
+}
+
+interface IScheduleServiceTeacher {
+  + CommitScheduleRequest()
+  + ViewSchedule()
+}
+
+interface IScheduleServiceStudent {
+  + RemindSchedule()
+  + ViewSchedule()
+}
+
+class ScheduleService {
+  - db_service_: DataBaseService&
+  - log_service_: LogService&
+  + ViewSchedule()
+  + CheckScheduleRequest()
+  + AddSchedule()
+  + CommitScheduleRequest()
+  + RemindSchedule()
+}
+
+class UserManagement {
+  - db_service_: DataBaseService&
+  - log_service_: LogService&
+  + ViewUserList()
+  + AddUser()
+  + FindItem()
+  + UpdateItem()
+  + DeleteItem()
+}
+
+interface Question {
+  - question_id_: int
+  - course_: CourseEnum
+  - type_: QuestionType
+  - quetion_context_: std::string
+  - mark_: int
+  + ShowQuestion(): void
+}
+
+class ChoiceQuestion extends Question {
+    - question_choices_: std::array<std::string, 4>
+    - question_answer_: int
+    + ShowQuestion(): void
+}
+
+class JudgementQuestion extends Question {
+    - question_answer_: bool
+    + ShowQuestion(): void
+}
+
+class SubjectiveQuestion extends Question {
+    - question_answer_: std::string
+    + ShowQuestion(): void
+}
+
+interface IQuestionBank {
+    + ViewQuestionList(): void
+    + CreateQuestion(): Question
+    + AddQuestion(): void
+    + ChooseQuestion(): void
+}
+
+class QuestionBank {
+    - db_service_: DataBaseService&
+    - log_service_: LogService&
+    + ViewQuestionList(): void
+    + CreateQuestion(): Question
+    + AddQuestion(): void
+    + ChooseQuestion(): void
+}
+
+class Paper {
+    - paper_id_: int
+    - course_: CourseEnum
+    - paper_name_: std::string
+    - total_mark_: int
+    - question_id_list_: std::vector<int>
+    + ShowPaper(): void
+}
+
+interface IPaperBank {
+    + ViewPaperList(): void
+    + CreatePaper(): Paper
+    + AddPaper(): void
+}
+
+class PaperBank {
+    - db_service_: DataBaseService&
+    - log_service_: LogService&
+    + ViewPaperList(): void
+    + CreatePaper(): Paper
+    + AddPaper(): void
+}
+
+class Answer {
+    - answer_id_: int
+    - question_id_: int
+    - answer_context_: std::variant<int, bool, std::string>
+    - mark_: int
+}
+
+class AnswerSheet {
+    - answer_sheet_id_: int
+    - paper_id_: int
+    - student_id_: int
+    - total_mark_: int
+    - answer_list_: std::vector<Answer>
+    + ShowAnswerSheet(): void
+}
+
+interface IAnswerBankTeacher {
+    + ViewAnswerList(): void
+    + ChooseAnswer(): void
+    + CorrectAnswer(): void
+}
+interface IAnswerBankStudent {
+    + StartAnswer(): void
+    + ViewResult(): AnswerSheet
+}
+
+class AnswerBank {
+    - db_service_: DataBaseService&
+    - log_service_: LogService&
+    
+    + ViewAnswerList(): void
+    + ChooseAnswer(): void
+    + CorrectAnswer(): void
+    + StartAnswer(): void
+    + ViewResult(): AnswerSheet
+}
+
+interface IDataBaseRepository {
+    +CreateItem()
+    +FindItem()
+    +UpdateItem()
+    +DeleteItem()
+}
+
+class JsonUserRepository {
+    +CreateItem()
+    +FindItem()
+    +UpdateItem()
+    +DeleteItem()
+}
+
+class RedisUserRepository {
+    +CreateItem()
+    +FindItem()
+    +UpdateItem()
+    +DeleteItem()
+}
+
+class DataBaseService {
+    -userRepository: IDataBaseRepository
+
+    +SetUserRepository(repository: IDataBaseRepository)
+    +Connect()
+    +Disconnect()
+    +CreateItem()
+    +FindItem()
+    +UpdateItem()
+    +DeleteItem()
+}
+
+
+
+class LogService {
+  + WriteLog()
+}
+
+ExamSystemService --* DataBaseService
+ExamSystemService --* LogService
+ExamSystemService --* Authentication
+ExamSystemService --* User
+
+User --o DataBaseService
+User --o LogService
+
+AdminService --> UserManagement
+AdminService --> IScheduleServiceAdmin
+
+TeacherService --> IScheduleServiceTeacher
+TeacherService --> IQuestionBank : CRUD题库
+TeacherService --> IPaperBank : 出卷
+TeacherService --> IAnswerBankTeacher : 改卷
+
+StudentService --> IScheduleServiceStudent
+StudentService --> IAnswerBankStudent
+
+Authentication --o DataBaseService
+Authentication --o LogService
+
+IScheduleServiceAdmin <|.. ScheduleService
+IScheduleServiceTeacher <|.. ScheduleService
+IScheduleServiceStudent <|.. ScheduleService
+
+ScheduleService --o DataBaseService
+ScheduleService --o LogService
+
+UserManagement --o DataBaseService
+UserManagement --o LogService
+
+IQuestionBank <|.. QuestionBank
+QuestionBank --o DataBaseService
+QuestionBank --o LogService
+IQuestionBank --> Question
+
+IPaperBank <|.. PaperBank
+PaperBank --o DataBaseService
+PaperBank --o LogService
+IPaperBank --> Paper
+
+IAnswerBankTeacher <|.. AnswerBank
+IAnswerBankStudent <|.. AnswerBank
+AnswerBank --o DataBaseService
+AnswerBank --o LogService
+IAnswerBankStudent --> AnswerSheet
+AnswerSheet --> Answer
+
+IDataBaseRepository <|.. JsonUserRepository
+IDataBaseRepository <|.. RedisUserRepository
+DataBaseService o-- IDataBaseRepository
+
+@enduml
