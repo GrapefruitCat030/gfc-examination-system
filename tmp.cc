@@ -4,7 +4,7 @@
 #include<variant>
 #include<memory>
 
-enum CourseEnum {
+enum CourseType {
    kSubjectPython = 0,
    kSubjectCpp, 
 };
@@ -15,18 +15,15 @@ enum QuestionType {
     kQuestionTypeSubject,
 };
 
-
-// 请作为一个PlantUML类图生成器，你需要根据我的提示内容生成一个图书管理系统类图，并输出相应的PlantUML代码。
-
 // 依赖注入模式
 class ExamSystemService {
 public:
-    DataBaseService db_service_; 
-    LogService      log_service_;
+    DataBaseService &db_service_; 
+    LogService      &log_service_;
     Authentication authentic_; // 注入 db
     User user_; // 注入 db
 
-    ExamSystemService();
+    ExamSystemService(DataBaseService &, LogService &);
 
 };
 
@@ -37,30 +34,30 @@ class User {
 public:
     int user_id_;
     std::string user_name_;
-    
+    std::string password_;
+    int authority_;
+
     DataBaseService    &db_service_; 
     LogService          &log_service_;
     
     User(DataBaseService &, LogService &);
 }; 
 
-/*	UserManagement ScheduleService; */
-class AdminService : User{
+class Admin : User {
     UserManagement          user_manage_service_;
     IScheduleServiceAdmin   schedule_service_;
 };
+class Teacher : User {
+    CourseType course_;
 
-//	QuestionBank PaperBank ScheduleService AnswerBank
-class TeacherService : User {
     IScheduleServiceTeacher schedule_service_;
-    IQuestionBank question_bank_service_;
-    IPaperBank paper_bank_service_;
-    IAnswerBankTeacher answer_bank_service_;
+    IQuestionBankService question_bank_service_;
+    IPaperBankService paper_bank_service_;
+    IAnswerBankServiceTeacher answer_bank_service_;
 };	
-//	AnswerBank ScheduleService
-class StudentService : User {
+class Student : User {
     IScheduleServiceStudent schedule_service_;
-    IAnswerBankStudent answer_bank_service_;
+    IAnswerBankServiceStudent answer_bank_service_;
 };	
 
 // student 定时答题用select做
@@ -74,9 +71,21 @@ class Authentication { // 登陆功能
     void Login();    
 };
 
+class Schedule {
+    int         schedule_id_;
+    std::string schedule_date_;
+    std::string time_begin_;
+    std::string time_end_;
+    CourseType  course_;
+    int         paper_id_;
+    bool        request_flag_;
+    
+    void set_request_flag(bool);
+};
 // Admin Interface
 class IScheduleServiceAdmin {
     virtual void CheckScheduleRequest();
+    virtual void ChooseAndSetRequest();
     virtual void AddSchedule();
     virtual void ViewSchedule();
 }; 
@@ -95,10 +104,13 @@ class ScheduleService : IScheduleServiceAdmin, IScheduleServiceTeacher, ISchedul
 public:
     DataBaseService &db_service_; 
     LogService      &log_service_;
+    std::vector<Schedule> schedule_list_;
+
     ScheduleService(DataBaseService &, LogService &);
     void ViewSchedule();
     // Admin Interface
     void CheckScheduleRequest() override;
+    void ChooseAndSetRequest() override;
     void AddSchedule() override;
     // Teacher Interface
     void CommitScheduleRequest() override;
@@ -106,7 +118,8 @@ public:
     void RemindSchedule() override;
 };
 
-class UserManagement {	// 查看用户列表，增删改用户查用户
+// 查看用户列表，增删改用户查用户
+class UserManagement {	
     void ViewUserList();
     void CreateItem();
     void FindItem();
@@ -125,7 +138,7 @@ class UserManagement {	// 查看用户列表，增删改用户查用户
 class Question {
 private:
     int             question_id_;
-    CourseEnum      course_;    
+    CourseType      course_;    
     QuestionType    type_;
     std::string     quetion_context_;
     int             mark_;
@@ -149,17 +162,16 @@ private:
     std::string question_answer_;
     void ShowQuestion() override;  
 };
-class IQuestionBank {
+class IQuestionBankService {
     virtual void        ViewQuestionList();
     virtual Question    CreateQuestion();
     virtual void        AddQuestion();
     virtual void        ChooseQuestion();
 };
-// Question DataBaseService	教师出题用，教师查看题库
-class QuestionBank : IQuestionBank {
+class QuestionBankService : IQuestionBankService {
     DataBaseService &db_service_; 
     LogService      &log_service_;
-    QuestionBank(DataBaseService &, LogService &);
+    QuestionBankService(DataBaseService &, LogService &);
     
     void        ViewQuestionList();
     Question    CreateQuestion();
@@ -172,23 +184,23 @@ class QuestionBank : IQuestionBank {
 
 class Paper {
     int         paper_id_;
-    CourseEnum  course_;    
+    CourseType  course_;    
     std::string paper_name_;
     int         total_mark_;
     std::vector<int> question_id_list_;
     void ShowPaper();
 };
-class IPaperBank {
+class IPaperBankService {
     virtual void        ViewPaperList();
     // 创建试卷实例，每次添加试题先进vector，最后再加到两张表中
     virtual Paper       CreatePaper();
     virtual void        AddPaper();
 };
-// QuestionBank Paper DataBaseService	教师出卷用
-class PaperBank : IPaperBank {
+// QuestionBankService Paper DataBaseService	教师出卷用
+class PaperBankService : IPaperBankService {
     DataBaseService &db_service_; 
     LogService      &log_service_;
-    PaperBank(DataBaseService &, LogService &);
+    PaperBankService(DataBaseService &, LogService &);
 
     void        ViewPaperList();
     Paper       CreatePaper();
@@ -216,20 +228,20 @@ class AnswerSheet {
 /* 依赖反转原则，接口隔离原则 */
 
 // Teacher Interface: 改卷
-class IAnswerBankTeacher {
+class IAnswerBankServiceTeacher {
     virtual void ViewAnswerList();
     virtual void ChooseAnswer();
     virtual void CorrectAnswer();
 };
 // Student Interface: 答卷，查看成绩
-class IAnswerBankStudent {
+class IAnswerBankServiceStudent {
     virtual void StartAnswer();
     virtual AnswerSheet ViewResult();
 };
-class AnswerBank : IAnswerBankTeacher, IAnswerBankStudent {
+class AnswerBankService : IAnswerBankServiceTeacher, IAnswerBankServiceStudent {
     DataBaseService &db_service_; 
     LogService      &log_service_;
-    AnswerBank(DataBaseService &, LogService &);
+    AnswerBankService(DataBaseService &, LogService &);
 
     // Teacher Interface
     void ViewAnswerList() override;
@@ -285,7 +297,7 @@ public:
 };
 
 // 实现具体的数据库访问逻辑
-class JsonUserRepository : public IDataBaseRepository {
+class JsonDBRepository : public IDataBaseRepository {
 public:
     void CreateItem() override {
         // 在JSON存储中创建用户的逻辑
@@ -304,7 +316,7 @@ public:
     }
 };
 
-class RedisUserRepository : public IDataBaseRepository {
+class RedisDBRepository : public IDataBaseRepository {
 public:
     void CreateItem() override {
         // 在Redis存储中创建用户的逻辑
@@ -329,7 +341,6 @@ class LogService {
 };
 
 class BackUpService;
-// 工厂模式和Repository模式相比有什么不同？代码例子说明
 
 int main() {
 

@@ -1,8 +1,8 @@
 @startuml
 
 class ExamSystemService {
-  - db_service_: DataBaseService
-  - log_service_: LogService
+  - db_service_: DataBaseService&
+  - log_service_: LogService&
   - authentic_: Authentication
   - user_: User
 }
@@ -12,23 +12,26 @@ class User {
   - log_service_: LogService&
   - user_id_: int
   - user_name_: string
+  - password_: string
+  - authority_: int
 }
 
-class AdminService extends User {
+class Admin extends User {
   - userManagement: UserManagement
   - scheduleServiceAdmin: IScheduleServiceAdmin
 }
 
-class TeacherService extends User {
+class Teacher extends User {
+  - course_ : CourseType
   - scheduleServiceTeacher: IScheduleServiceTeacher
-  - questionBank: IQuestionBank
-  - paperBank: IPaperBank
-  - answerBankTeacher: IAnswerBankTeacher
+  - questionBank: IQuestionBankService
+  - paperBank: IPaperBankService
+  - answerBankTeacher: IAnswerBankServiceTeacher
 }
 
-class StudentService extends User {
+class Student extends User {
   - scheduleServiceStudent: IScheduleServiceStudent
-  - answerBankStudent: IAnswerBankStudent
+  - answerBankStudent: IAnswerBankServiceStudent
 }
 
 class Authentication {
@@ -37,30 +40,44 @@ class Authentication {
   + Login()
 }
 
+class Schedule {
+    - schedule_id_: int
+    - schedule_date_: std::string
+    - time_begin_: std::string
+    - time_end_: std::string
+    - course_: CourseType
+    - paper_id_: int
+    - request_flag_: bool
+    + set_request_flag(bool): void
+}
+
 interface IScheduleServiceAdmin {
-  + CheckScheduleRequest()
-  + AddSchedule()
-  + ViewSchedule()
+    {abstract} + CheckScheduleRequest(): void
+    {abstract} + ChooseAndSetRequest(): void
+    {abstract} + AddSchedule(): void
+    {abstract} + ViewSchedule(): void
 }
 
 interface IScheduleServiceTeacher {
-  + CommitScheduleRequest()
-  + ViewSchedule()
+    {abstract} + CommitScheduleRequest(): void
+    {abstract} + ViewSchedule(): void
 }
 
 interface IScheduleServiceStudent {
-  + RemindSchedule()
-  + ViewSchedule()
+    {abstract} + RemindSchedule(): void
+    {abstract} + ViewSchedule(): void
 }
 
 class ScheduleService {
-  - db_service_: DataBaseService&
-  - log_service_: LogService&
-  + ViewSchedule()
-  + CheckScheduleRequest()
-  + AddSchedule()
-  + CommitScheduleRequest()
-  + RemindSchedule()
+    - db_service_: DataBaseService&
+    - log_service_: LogService&
+    - schedule_list_: std::vector<Schedule>
+    + ViewSchedule(): void
+    + CheckScheduleRequest(): void
+    + ChooseAndSetRequest(): void
+    + AddSchedule(): void
+    + CommitScheduleRequest(): void
+    + RemindSchedule(): void
 }
 
 class UserManagement {
@@ -73,9 +90,9 @@ class UserManagement {
   + DeleteItem()
 }
 
-interface Question {
+class Question {
   - question_id_: int
-  - course_: CourseEnum
+  - course_: CourseType
   - type_: QuestionType
   - quetion_context_: std::string
   - mark_: int
@@ -98,14 +115,14 @@ class SubjectiveQuestion extends Question {
     + ShowQuestion(): void
 }
 
-interface IQuestionBank {
+interface IQuestionBankService {
     + ViewQuestionList(): void
     + CreateQuestion(): Question
     + AddQuestion(): void
     + ChooseQuestion(): void
 }
 
-class QuestionBank {
+class QuestionBankService {
     - db_service_: DataBaseService&
     - log_service_: LogService&
     + ViewQuestionList(): void
@@ -116,20 +133,20 @@ class QuestionBank {
 
 class Paper {
     - paper_id_: int
-    - course_: CourseEnum
+    - course_: CourseType
     - paper_name_: std::string
     - total_mark_: int
     - question_id_list_: std::vector<int>
     + ShowPaper(): void
 }
 
-interface IPaperBank {
+interface IPaperBankService {
     + ViewPaperList(): void
     + CreatePaper(): Paper
     + AddPaper(): void
 }
 
-class PaperBank {
+class PaperBankService {
     - db_service_: DataBaseService&
     - log_service_: LogService&
     + ViewPaperList(): void
@@ -153,17 +170,17 @@ class AnswerSheet {
     + ShowAnswerSheet(): void
 }
 
-interface IAnswerBankTeacher {
+interface IAnswerBankServiceTeacher {
     + ViewAnswerList(): void
     + ChooseAnswer(): void
     + CorrectAnswer(): void
 }
-interface IAnswerBankStudent {
+interface IAnswerBankServiceStudent {
     + StartAnswer(): void
     + ViewResult(): AnswerSheet
 }
 
-class AnswerBank {
+class AnswerBankService {
     - db_service_: DataBaseService&
     - log_service_: LogService&
     
@@ -211,59 +228,79 @@ class DataBaseService {
 
 class LogService {
   + WriteLog()
+  + ViewLog()
 }
 
-ExamSystemService --* DataBaseService
-ExamSystemService --* LogService
-ExamSystemService --* Authentication
-ExamSystemService --* User
+ExamSystemService "1..n" --o "1" DataBaseService
+ExamSystemService "1..n" --o "1" LogService
+ExamSystemService "1" --* "1" Authentication
+ExamSystemService "1" --* "1" User
 
-User --o DataBaseService
-User --o LogService
+User "1..n" --o "1" DataBaseService
+User "1..n" --o "1" LogService
 
-AdminService --> UserManagement
-AdminService --> IScheduleServiceAdmin
+Admin "1" --> "1" UserManagement
+Admin "1" --> "1" IScheduleServiceAdmin
 
-TeacherService --> IScheduleServiceTeacher
-TeacherService --> IQuestionBank : CRUD题库
-TeacherService --> IPaperBank : 出卷
-TeacherService --> IAnswerBankTeacher : 改卷
+Teacher "1" --> "1" IScheduleServiceTeacher 
+Teacher "1" --> "1" IQuestionBankService
+Teacher "1" --> "1" IPaperBankService 
+Teacher "1" --> "1" IAnswerBankServiceTeacher 
 
-StudentService --> IScheduleServiceStudent
-StudentService --> IAnswerBankStudent
+Student "1" --> "1" IScheduleServiceStudent
+Student "1" --> "1" IAnswerBankServiceStudent
 
-Authentication --o DataBaseService
-Authentication --o LogService
+Authentication "1..n" --o "1" DataBaseService
+Authentication "1..n" --o "1" LogService
 
 IScheduleServiceAdmin <|.. ScheduleService
 IScheduleServiceTeacher <|.. ScheduleService
 IScheduleServiceStudent <|.. ScheduleService
 
-ScheduleService --o DataBaseService
-ScheduleService --o LogService
+ScheduleService "1..n" --o "1" DataBaseService
+ScheduleService "1..n" --o "1" LogService
+ScheduleService --> Schedule
 
-UserManagement --o DataBaseService
-UserManagement --o LogService
+UserManagement "1..n" --o "1" DataBaseService
+UserManagement "1..n" --o "1" LogService
 
-IQuestionBank <|.. QuestionBank
-QuestionBank --o DataBaseService
-QuestionBank --o LogService
-IQuestionBank --> Question
+IQuestionBankService <|.. QuestionBankService
+QuestionBankService "1..n" --o "1" DataBaseService
+QuestionBankService "1..n" --o "1" LogService
+QuestionBankService --> Question
 
-IPaperBank <|.. PaperBank
-PaperBank --o DataBaseService
-PaperBank --o LogService
-IPaperBank --> Paper
+IPaperBankService <|.. PaperBankService
+PaperBankService "1..n" --o "1" DataBaseService
+PaperBankService "1..n" --o "1" LogService
+PaperBankService --> Paper
 
-IAnswerBankTeacher <|.. AnswerBank
-IAnswerBankStudent <|.. AnswerBank
-AnswerBank --o DataBaseService
-AnswerBank --o LogService
-IAnswerBankStudent --> AnswerSheet
+IAnswerBankServiceTeacher <|.. AnswerBankService
+IAnswerBankServiceStudent <|.. AnswerBankService
+AnswerBankService "1..n" --o "1" DataBaseService
+AnswerBankService "1..n" --o "1" LogService
+AnswerBankService --> AnswerSheet
 AnswerSheet --> Answer
 
 IDataBaseRepository <|.. JsonUserRepository
 IDataBaseRepository <|.. RedisUserRepository
-DataBaseService o-- IDataBaseRepository
+DataBaseService *-- IDataBaseRepository
+
+enum CourseType {
+   kSubjectPython = 0,
+   kSubjectCpp, 
+}
+
+enum QuestionType {
+    kQuestionTypeChoice = 0,
+    kQuestionTypeJudge,
+    kQuestionTypeSubject,
+}
+
+CourseType <.. "0..*" Schedule
+CourseType <.. "0..*" Teacher
+CourseType <.. "0..*" Question
+CourseType <.. "0..*" Paper
+QuestionType <.. "0..*" Question
+
 
 @enduml
