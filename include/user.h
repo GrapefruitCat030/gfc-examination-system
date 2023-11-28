@@ -20,6 +20,7 @@ public:
 class Admin : User {
     UserManagement          user_manage_service_;
     IScheduleServiceAdmin   schedule_service_;
+    Admin(DataBaseService &, LogService &);
 };
 class Teacher : User {
     CourseType course_;
@@ -28,8 +29,12 @@ class Teacher : User {
     IQuestionBankService question_bank_service_;
     IPaperBankService paper_bank_service_;
     IAnswerBankServiceTeacher answer_bank_service_;
+
+    Teacher(DataBaseService &, LogService &);
 };	
 class Student : User {
     IScheduleServiceStudent schedule_service_;
     IAnswerBankServiceStudent answer_bank_service_;
+
+    Student(DataBaseService &, LogService &);
 };	

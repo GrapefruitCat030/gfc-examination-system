@@ -49,5 +49,6 @@
         "thread": "cpp",
         "typeinfo": "cpp",
         "variant": "cpp"
-    }
+    },
+    "editor.inlineSuggest.showToolbar": "onHover"
 }
