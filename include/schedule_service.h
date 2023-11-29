@@ -9,22 +9,22 @@
 // Admin Interface
 class IScheduleServiceAdmin {
 public:
-    virtual void CheckScheduleRequest();
-    virtual void ChooseAndSetRequest();
-    virtual void AddSchedule();
-    virtual void ViewSchedule();
+    virtual void CheckScheduleRequest() = 0;
+    virtual void ChooseAndSetRequest() = 0;
+    virtual void AddSchedule() = 0;
+    virtual void ViewSchedule() = 0;
 }; 
 // Teacher Interface
 class IScheduleServiceTeacher {
 public:
-    virtual void CommitScheduleRequest();
-    virtual void ViewSchedule();
+    virtual void CommitScheduleRequest() = 0;
+    virtual void ViewSchedule() = 0;
 }; 
 // Student Interface
 class IScheduleServiceStudent {
 public:
-    virtual void RemindSchedule();
-    virtual void ViewSchedule();
+    virtual void RemindSchedule() = 0;
+    virtual void ViewSchedule() = 0;
 }; 
 // 查看考试安排，主动添加考试安排，教师提交考试安排请求，审议考试安排请求
 class ScheduleService : public IScheduleServiceAdmin, public IScheduleServiceTeacher, public IScheduleServiceStudent {	
@@ -34,7 +34,8 @@ public:
     std::vector<Schedule> schedule_list_;
 
     ScheduleService(DataBaseService *, LogService *);
-    void ViewSchedule();
+    ~ScheduleService() {};
+    void ViewSchedule() override;
     // Admin Interface
     void CheckScheduleRequest() override;
     void ChooseAndSetRequest() override;

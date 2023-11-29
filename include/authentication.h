@@ -10,5 +10,5 @@ public:
     LogService      *log_service_;
     Authentication(DataBaseService *, LogService *);
 
-    User & Login();    
+    User * Login();    
 };

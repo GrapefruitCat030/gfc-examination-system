@@ -1,20 +1,25 @@
 #pragma once 
 
-#include "qusetion.h"
+#include "question.h"
+#include "database_service.h"
+#include "log_service.h"
+
 
 class IQuestionBankService {
-    virtual void        ViewQuestionList();
-    virtual Question    CreateQuestion();
-    virtual void        AddQuestion();
-    virtual void        ChooseQuestion();
+public:
+    virtual void        ViewQuestionList() {};
+    virtual Question    CreateQuestion(){};
+    virtual void        AddQuestion(){};
+    virtual void        ChooseQuestion(){};
 };
-class QuestionBankService : IQuestionBankService {
-    DataBaseService &db_service_; 
-    LogService      &log_service_;
-    QuestionBankService(DataBaseService &, LogService &);
+class QuestionBankService : public IQuestionBankService {
+public:
+    DataBaseService *db_service_; 
+    LogService      *log_service_;
+    QuestionBankService(DataBaseService *, LogService *);
     
-    void        ViewQuestionList();
-    Question    CreateQuestion();
-    void        AddQuestion();
-    void        ChooseQuestion();
+    void        ViewQuestionList() override;
+    Question    CreateQuestion() override;
+    void        AddQuestion() override;
+    void        ChooseQuestion() override;
 };	

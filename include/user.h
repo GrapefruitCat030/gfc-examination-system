@@ -22,8 +22,10 @@ public:
     DataBaseService   *db_service_; 
     LogService        *log_service_;
 
+    User();
     User(int, std::string, std::string, int, DataBaseService *, LogService *);
-    virtual void BootService();
+    virtual ~User();
+    virtual void BootService() {};
 }; 
 
 class Admin : public User {
@@ -31,7 +33,8 @@ public:
     UserManagement          user_manage_service_;
     IScheduleServiceAdmin   *schedule_service_;
     
-    Admin(const User& base, DataBaseService *, LogService *);
+    Admin(User *base, DataBaseService *, LogService *);
+    ~Admin(){};
     void BootService() override;
     void UserMangeMenu();
     void ScheduleMenu();
@@ -46,12 +49,21 @@ public:
     IPaperBankService       *paper_bank_service_;
     IAnswerBankServiceTeacher *answer_bank_service_;
 
-    Teacher(DataBaseService *, LogService *, CourseType);
-};	
+    Teacher(User *base, DataBaseService *, LogService *, CourseType);
+    ~Teacher() {};
+    void BootService() override;
+    void ScheduleMenu();
+    void QuestionBankMenu();
+    void PaperBankMenu();
+    void AnswerBankMenu();
+};
 class Student : public User {
 public:
-    IScheduleServiceStudent schedule_service_;
-    IAnswerBankServiceStudent answer_bank_service_;
+    IScheduleServiceStudent *schedule_service_;
+    IAnswerBankServiceStudent *answer_bank_service_;
 
-    Student(DataBaseService *, LogService *);
+    Student(User *base, DataBaseService *, LogService *);
+    void BootService() override;
+    void ScheduleMenu();
+    void AnswerBankMenu();
 };	

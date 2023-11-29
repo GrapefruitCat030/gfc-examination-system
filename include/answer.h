@@ -1,8 +1,10 @@
 #pragma once 
 
 #include<variant>
+#include<string>
+#include<vector>
 
-class Answer {
+struct Answer {
     int answer_id_;
     int question_id_;
     std::variant<int, bool, std::string> answer_context_;

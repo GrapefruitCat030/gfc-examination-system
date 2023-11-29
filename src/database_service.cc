@@ -3,9 +3,11 @@
 #include<fstream>
 #include<sstream>
 
+const char *user_csv = "database/user.csv";
+
 std::vector<UserRecord> DataBaseService::GetAllUserRecord() {
     std::vector<UserRecord> records;
-    std::ifstream file("user.csv");
+    std::ifstream file(user_csv);
     if (file) {
             std::string line;
             while (std::getline(file, line)) {
@@ -24,7 +26,7 @@ std::vector<UserRecord> DataBaseService::GetAllUserRecord() {
     return records;
 }    
 UserRecord DataBaseService::GetUserRecordByName(std::string username) {
-     std::ifstream inputFile("user.csv");
+     std::ifstream inputFile(user_csv);
         if (inputFile) {
             std::string line;
             while (std::getline(inputFile, line)) {
@@ -44,9 +46,10 @@ UserRecord DataBaseService::GetUserRecordByName(std::string username) {
         return UserRecord{};
 }
 void DataBaseService::AddUser(UserRecord &record, bool is_teacher) {
-    std::ofstream file("user.csv", std::ios::app);
+    std::ofstream file(user_csv, std::ios::app);
     if (file) {
-        file << record.user_id_ << ","
+        file << std::endl  
+            << record.user_id_ << ","
             << record.user_name_ << ","
             << record.password_ << ","
             << record.authority_ << "\n";
@@ -56,7 +59,7 @@ void DataBaseService::AddUser(UserRecord &record, bool is_teacher) {
     }
 }
 void DataBaseService::DeleteUser(int user_id) {
-     std::ifstream inputFile("user.csv");
+     std::ifstream inputFile(user_csv);
         if (inputFile) {
             std::ofstream outputFile("temp.csv");
             if (outputFile) {
@@ -74,8 +77,8 @@ void DataBaseService::DeleteUser(int user_id) {
                 }
                 inputFile.close();
                 outputFile.close();
-                std::remove("user.csv");
-                std::rename("temp.csv", "user.csv");
+                std::remove(user_csv);
+                std::rename("temp.csv", user_csv);
                 std::cout << "记录删除成功！\n";
             } else {
                 std::cout << "无法创建临时文件！\n";

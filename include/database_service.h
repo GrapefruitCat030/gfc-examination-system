@@ -10,6 +10,11 @@ struct UserRecord {
     int authority_;
 };
 
+#include"schedule.h"
+#include"question.h"
+#include"paper.h"
+#include"answer.h"
+
 
 // #include "database_repository.h"
 
@@ -22,6 +27,28 @@ public:
     UserRecord GetUserRecordByName(std::string username);
     void AddUser(UserRecord &, bool is_teacher);
     void DeleteUser(int user_id);
+
+    std::vector<Schedule> GetAllSchedule();
+    Schedule GetScheduleById(int schedule_id);
+    void UpdateSchedule(Schedule &);
+    void AddSchedule(Schedule &);
+    void DeleteSchedule(int schedule_id);
+
+    std::vector<Question> GetAllQusetion();
+    Question GetQuestionById(int question_id);
+    void AddQuestion(Question &);
+    void DeleteQuestion(int question_id);
+
+    std::vector<Paper> GetAllPaper();
+    Paper GetPaperById(int paper_id);
+    void AddPaper(Paper &);
+    void DeletePaper(int paper_id);
+
+    std::vector<Answer> GetAllAnswer();
+    Answer GetAnswerById(int answer_id);
+    void AddAnswer(Answer &);
+    void DeleteAnswer(int answer_id);
+    void UpdateAnswer(Answer &);
 
 
 // private:
