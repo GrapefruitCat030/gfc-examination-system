@@ -7,5 +7,5 @@ int main() {
     DataBaseService db_service;
     LogService      log_service;
     ExamSystemService examsystem_service(&db_service, &log_service);
-    examsystem_service.boot_service();
+    examsystem_service.BootService();
 }

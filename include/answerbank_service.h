@@ -1,5 +1,6 @@
 #pragma once
 
+#include "answer.h"
 
 // Teacher Interface: 改卷
 class IAnswerBankServiceTeacher {

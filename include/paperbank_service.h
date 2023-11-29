@@ -1,5 +1,6 @@
 #pragma once 
 
+#include "paper.h"
 
 class IPaperBankService {
     virtual void        ViewPaperList();

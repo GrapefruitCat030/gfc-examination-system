@@ -1,5 +1,8 @@
 #pragma once 
 
+#include"constant.h"
+#include<string>
+#include<vector>
 
 class Paper {
     int         paper_id_;

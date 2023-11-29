@@ -14,5 +14,5 @@ public:
     Authentication  authentic_; // 注入 db
 
     ExamSystemService(DataBaseService *, LogService *);
-    void boot_service();
+    void BootService();
 };

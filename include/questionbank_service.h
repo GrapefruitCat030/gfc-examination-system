@@ -1,5 +1,7 @@
 #pragma once 
 
+#include "qusetion.h"
+
 class IQuestionBankService {
     virtual void        ViewQuestionList();
     virtual Question    CreateQuestion();

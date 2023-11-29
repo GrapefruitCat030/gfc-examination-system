@@ -1,5 +1,8 @@
 #pragma once
 
+#include<string>
+#include "constant.h"
+
 class Schedule {
     int         schedule_id_;
     std::string schedule_date_;
