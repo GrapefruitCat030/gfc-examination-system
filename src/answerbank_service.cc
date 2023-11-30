@@ -9,4 +9,6 @@ void AnswerBankService::ChooseAnswer() {};
 void AnswerBankService::CorrectAnswer() {};
 // Student Interface
 void AnswerBankService::StartAnswer() {};
-AnswerSheet AnswerBankService::ViewResult() {};
+AnswerSheet AnswerBankService::ViewResult() {
+    return AnswerSheet{};
+};

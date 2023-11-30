@@ -9,6 +9,7 @@
 // Admin Interface
 class IScheduleServiceAdmin {
 public:
+    virtual ~IScheduleServiceAdmin() {};
     virtual void CheckScheduleRequest() = 0;
     virtual void ChooseAndSetRequest() = 0;
     virtual void AddSchedule() = 0;
@@ -17,12 +18,14 @@ public:
 // Teacher Interface
 class IScheduleServiceTeacher {
 public:
+    virtual ~IScheduleServiceTeacher() {};
     virtual void CommitScheduleRequest() = 0;
     virtual void ViewSchedule() = 0;
 }; 
 // Student Interface
 class IScheduleServiceStudent {
 public:
+    virtual ~IScheduleServiceStudent() {};
     virtual void RemindSchedule() = 0;
     virtual void ViewSchedule() = 0;
 }; 

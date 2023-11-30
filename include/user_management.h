@@ -10,7 +10,6 @@ public:
     void ViewUserList();
     void AddUser();
     void FindUser();
-    void UpdateUser();
     void DeleteUser();
 
     DataBaseService *db_service_; 

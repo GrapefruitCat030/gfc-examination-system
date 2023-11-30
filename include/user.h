@@ -34,7 +34,7 @@ public:
     IScheduleServiceAdmin   *schedule_service_;
     
     Admin(User *base, DataBaseService *, LogService *);
-    ~Admin(){};
+    ~Admin();
     void BootService() override;
     void UserMangeMenu();
     void ScheduleMenu();
@@ -42,15 +42,15 @@ public:
 };
 class Teacher : public User {
 public:
-    CourseType course_;
+    // CourseType course_;
 
     IScheduleServiceTeacher *schedule_service_;
     IQuestionBankService    *question_bank_service_;
     IPaperBankService       *paper_bank_service_;
     IAnswerBankServiceTeacher *answer_bank_service_;
 
-    Teacher(User *base, DataBaseService *, LogService *, CourseType);
-    ~Teacher() {};
+    Teacher(User *base, DataBaseService *, LogService *);
+    ~Teacher();
     void BootService() override;
     void ScheduleMenu();
     void QuestionBankMenu();
@@ -63,6 +63,7 @@ public:
     IAnswerBankServiceStudent *answer_bank_service_;
 
     Student(User *base, DataBaseService *, LogService *);
+    ~Student();
     void BootService() override;
     void ScheduleMenu();
     void AnswerBankMenu();

@@ -17,7 +17,7 @@ void ExamSystemService::BootService() {
     
     int rc = basic_user->authority_;
     if(rc == 0)         user_ = new Admin(basic_user, db_service_, log_service_);
-    else if (rc == 1)   user_ = new Teacher(basic_user, db_service_, log_service_, kSubjectPython);
+    else if (rc == 1)   user_ = new Teacher(basic_user, db_service_, log_service_);
     else if (rc == 2)   user_ = new Student(basic_user, db_service_, log_service_);
     else assert(0); 
 

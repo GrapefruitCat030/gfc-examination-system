@@ -4,6 +4,7 @@
 #include<sstream>
 
 const char *user_csv = "database/user.csv";
+const char *schedule_csv = "database/schedule.csv";
 
 std::vector<UserRecord> DataBaseService::GetAllUserRecord() {
     std::vector<UserRecord> records;
@@ -48,8 +49,7 @@ UserRecord DataBaseService::GetUserRecordByName(std::string username) {
 void DataBaseService::AddUser(UserRecord &record, bool is_teacher) {
     std::ofstream file(user_csv, std::ios::app);
     if (file) {
-        file << std::endl  
-            << record.user_id_ << ","
+        file<< record.user_id_ << ","
             << record.user_name_ << ","
             << record.password_ << ","
             << record.authority_ << "\n";
@@ -58,7 +58,7 @@ void DataBaseService::AddUser(UserRecord &record, bool is_teacher) {
         std::cout << "无法打开文件！\n";
     }
 }
-void DataBaseService::DeleteUser(int user_id) {
+void DataBaseService::DeleteUser(std::string user_id) {
      std::ifstream inputFile(user_csv);
         if (inputFile) {
             std::ofstream outputFile("temp.csv");
@@ -71,7 +71,7 @@ void DataBaseService::DeleteUser(int user_id) {
                     std::getline(ss, userNameFromRecord, ',');
                     std::getline(ss, password, ',');
                     std::getline(ss, authority, ',');
-                    if (std::stoi(userId) != user_id) {
+                    if (userId != user_id) {
                         outputFile << line << "\n";
                     }
                 }
@@ -87,3 +87,43 @@ void DataBaseService::DeleteUser(int user_id) {
             std::cout << "无法打开文件！\n";
         }
 }
+
+
+std::vector<Schedule> DataBaseService::ReadScheduleCSV() {
+    std::vector<Schedule> records;
+    std::ifstream file(schedule_csv);
+    if (file) {
+            std::string line;
+            while (std::getline(file, line)) {
+                std::stringstream ss(line);
+                std::string sid, begin_time, end_time, course, pid, flag;
+                std::getline(ss, sid, ',');
+                std::getline(ss, begin_time, ',');
+                std::getline(ss, end_time, ',');
+                std::getline(ss, course, ',');
+                std::getline(ss, pid, ',');
+                std::getline(ss, flag, ',');
+                records.push_back({std::stoi(sid), begin_time, end_time, course, std::stoi(pid), (bool)(std::stoi(flag))});
+            }
+    } else {
+        perror("open schedule csv.");
+        exit(-1);
+    }
+    return records;
+}
+void DataBaseService::WriteScheduleCSV(std::vector<Schedule> &records) {
+    std::ofstream file(schedule_csv);
+    if (file) {
+        for (const auto& record : records) {
+            file<< record.schedule_id_ << ","
+                << record.time_begin_<< ","
+                << record.time_end_<< ","
+                << record.course_<< ","
+                << record.paper_id_<< ","
+                << record.request_flag_
+                << std::endl;
+        }
+        file.close();
+    }
+} 
+

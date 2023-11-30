@@ -26,29 +26,47 @@ public:
     std::vector<UserRecord> GetAllUserRecord();    
     UserRecord GetUserRecordByName(std::string username);
     void AddUser(UserRecord &, bool is_teacher);
-    void DeleteUser(int user_id);
+    void DeleteUser(std::string user_id);
 
-    std::vector<Schedule> GetAllSchedule();
-    Schedule GetScheduleById(int schedule_id);
-    void UpdateSchedule(Schedule &);
-    void AddSchedule(Schedule &);
-    void DeleteSchedule(int schedule_id);
+    std::vector<Schedule> ReadScheduleCSV();
+    void WriteScheduleCSV(std::vector<Schedule> &); 
+    // Schedule GetScheduleById(std::string schedule_id);
+    // void UpdateSchedule(Schedule &);
+    // void AddSchedule(Schedule &);
+    // void DeleteSchedule(std::string schedule_id);
 
-    std::vector<Question> GetAllQusetion();
-    Question GetQuestionById(int question_id);
-    void AddQuestion(Question &);
-    void DeleteQuestion(int question_id);
+    std::vector<Question> ReadQuestionCSV();
+    void WriteQuestionCSV(std::vector<Question> &);
+    // Question GetQuestionById(std::string question_id);
+    // void AddQuestion(Question &);
+    // void DeleteQuestion(std::string question_id);
+    std::vector<ChoiceQuestion> ReadChoiceQuestionCSV();
+    void WriteChoiceQuestionCSV(std::vector<ChoiceQuestion> &);    
+    
+    std::vector<JudgementQuestion> ReadJudgementQuestionCSV();
+    void WriteJudgementQuestionCSV(std::vector<JudgementQuestion> &);    
+    
+    std::vector<SubjectiveQuestion> ReadSubjectiveQuestionCSV();
+    void WriteSubjectiveQuestionCSV(std::vector<SubjectiveQuestion> &);
 
-    std::vector<Paper> GetAllPaper();
-    Paper GetPaperById(int paper_id);
-    void AddPaper(Paper &);
-    void DeletePaper(int paper_id);
 
-    std::vector<Answer> GetAllAnswer();
-    Answer GetAnswerById(int answer_id);
-    void AddAnswer(Answer &);
-    void DeleteAnswer(int answer_id);
-    void UpdateAnswer(Answer &);
+
+    std::vector<Paper> ReadPaperCSV();
+    void WritePaperCSV(std::vector<Paper> &);
+    // Paper GetPaperById(std::string paper_id);
+    // void AddPaper(Paper &);
+    // void DeletePaper(std::string paper_id);
+
+    
+    std::vector<Answer> ReadAnswerCSV();
+    void WriteAnswerSheetCSV(std::vector<Answer> &);
+
+    std::vector<AnswerSheet> ReadAnswerSheetCSV();
+    void WriteAnswerSheetCSV(std::vector<AnswerSheet> &);
+    // Answer GetAnswerById(std::string answer_id);
+    // void AddAnswer(Answer &);
+    // void DeleteAnswer(std::string answer_id);
+    // void UpdateAnswer(Answer &);
 
 
 // private:

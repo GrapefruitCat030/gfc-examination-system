@@ -50,10 +50,10 @@ void UserManagement::FindUser() {
                     << std::endl;
     }
 }
-void UserManagement::UpdateUser() {
-
-}
 void UserManagement::DeleteUser() {
-
+    std::string id;
+    std::cout << "Enter id: ";
+    std::cin >> id;
+    db_service_->DeleteUser(id);
 } 
 
