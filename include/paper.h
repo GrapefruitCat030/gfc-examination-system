@@ -5,6 +5,7 @@
 #include<vector>
 
 class Paper {
+public:
     int         paper_id_;
     std::string course_;    
     std::string paper_name_;

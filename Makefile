@@ -31,3 +31,6 @@ clean:
 
 run:
 	@./build/exam_system
+
+gdb:
+	@gdb ./build/exam_system

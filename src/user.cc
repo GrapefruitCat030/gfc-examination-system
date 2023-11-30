@@ -170,7 +170,7 @@ void Teacher::QuestionBankMenu() {
         int rc = (input[0]) - '0';
         if(rc == 1)      question_bank_service_->ViewQuestionList();
         else if(rc == 2) question_bank_service_->ChooseQuestion();
-        else if(rc == 3) question_bank_service_->CreateQuestion();
+        else if(rc == 3) question_bank_service_->AddQuestion();
         else return;
     }
 }
@@ -178,7 +178,7 @@ void Teacher::PaperBankMenu() {
     while(true) {
         std::cout << "This is Paper Bank Menu.\n"
                      "Choose your service:\n"
-                     "1.View All 2.Create Question\n"
+                     "1.View All 2.View One 3.Add Paper\n"
                      ">>> "
                      ;
         std::string input;
@@ -189,7 +189,8 @@ void Teacher::PaperBankMenu() {
         /* Choose Service */
         int rc = (input[0]) - '0';
         if(rc == 1)      paper_bank_service_->ViewPaperList();
-        else if(rc == 2) paper_bank_service_->CreatePaper();
+        else if(rc == 2) paper_bank_service_->ViewPaper();
+        else if(rc == 3) paper_bank_service_->AddPaper();
         else return;
     }
 }

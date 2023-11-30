@@ -68,7 +68,6 @@ public:
     // void DeleteAnswer(std::string answer_id);
     // void UpdateAnswer(Answer &);
 
-
 // private:
 //     std::unique_ptr<IDataBaseRepository> userRepository;
 

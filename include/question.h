@@ -9,7 +9,6 @@
 class Question {
 public:
     int             question_id_;
-    // CourseType      course_;    
     std::string     course_;    
     QuestionType    type_;
     std::string     quetion_context_;
@@ -17,7 +16,7 @@ public:
     
     Question() {};
     ~Question() {};
-    virtual void ShowQuestion(); 
+    virtual void ShowQuestionDetail(); 
 };
 class ChoiceQuestion : public Question {
 public:
@@ -25,17 +24,20 @@ public:
     int                        question_answer_;
     
     ChoiceQuestion(const Question &);
-    void ShowQuestion() override;  
+    void ShowQuestionDetail() override;  
+    void ShowQuestionOnly();
 };
 class JudgementQuestion : public Question {
 public:
     bool question_answer_;
     JudgementQuestion(const Question &);
-    void ShowQuestion() override;  
+    void ShowQuestionDetail() override;  
+    void ShowQuestionOnly();
 };
 class SubjectiveQuestion : public Question {
 public:
     std::string question_answer_;
     SubjectiveQuestion(const Question &);
-    void ShowQuestion() override;  
+    void ShowQuestionDetail() override;  
+    void ShowQuestionOnly();
 };

@@ -8,6 +8,7 @@ struct Answer {
     int answer_id_;
     int question_id_;
     std::variant<int, bool, std::string> answer_context_;
+    std::string answer_context_;
     int mark_;
 };
 class AnswerSheet {

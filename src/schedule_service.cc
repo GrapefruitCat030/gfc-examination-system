@@ -10,7 +10,7 @@ ScheduleService::ScheduleService(DataBaseService *dbs, LogService *lgs) : db_ser
 
 
 void ScheduleService::ViewSchedule() {
-    schedule_list_ = db_service_->ReadScheduleCSV();
+    // schedule_list_ = db_service_->ReadScheduleCSV();
     for(auto record: schedule_list_) {
         if(record.request_flag_ == true) {
             std::cout   << record.schedule_id_ << "\t"\

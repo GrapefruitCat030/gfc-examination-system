@@ -9,7 +9,6 @@ class IQuestionBankService {
 public:
     virtual ~IQuestionBankService() {};
     virtual void        ViewQuestionList() = 0;
-    virtual Question    CreateQuestion() = 0;
     virtual void        AddQuestion() = 0;
     virtual void        ChooseQuestion() = 0;
 };
@@ -24,7 +23,6 @@ public:
 
     QuestionBankService(DataBaseService *, LogService *);
     void        ViewQuestionList() override;
-    Question    CreateQuestion() override;
     void        AddQuestion() override;
     void        ChooseQuestion() override;
 };	
