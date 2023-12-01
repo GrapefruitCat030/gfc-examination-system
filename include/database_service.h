@@ -59,7 +59,7 @@ public:
 
     
     std::vector<Answer> ReadAnswerCSV();
-    void WriteAnswerSheetCSV(std::vector<Answer> &);
+    void WriteAnswerCSV(std::vector<Answer> &);
 
     std::vector<AnswerSheet> ReadAnswerSheetCSV();
     void WriteAnswerSheetCSV(std::vector<AnswerSheet> &);

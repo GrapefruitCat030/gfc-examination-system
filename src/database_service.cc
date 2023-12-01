@@ -437,41 +437,88 @@ void DataBaseService::WritePaperCSV(std::vector<Paper> &paper_list) {
                 << p.total_mark_  
                 << std::endl;
             for(const auto& c:p.question_id_list_) {
-                file1 << p.paper_id_ << "," << c
+                file2 << p.paper_id_ << "," << c
                     << std::endl;
             } 
         }
         file1.close();
+        file2.close();
     }
 }
 
-std::vector<Answer> ReadAnswerCSV() {
+std::vector<Answer> DataBaseService::ReadAnswerCSV() {
     std::vector<Answer> records;
     std::ifstream file(answer_csv);
     if (file) {
-            std::string line;
-            while (std::getline(file, line)) {
-                std::stringstream ss(line);
-                std::string aid, qid, choice_answer, judge_answer, subject_answer, mark;
-                std::getline(ss, aid, ',');
-                std::getline(ss, qid, ',');
-                std::getline(ss, choice_answer, ',');
-                std::getline(ss, judge_answer, ',');
-                std::getline(ss, subject_answer, ',');
-                std::getline(ss, mark, ',');
-                // TODO
-            }
+        std::string line;
+        while (std::getline(file, line)) {
+            std::stringstream ss(line);
+            std::string aid, qid, choice_answer, judge_answer, subject_answer, mark;
+            std::getline(ss, aid, ',');
+            std::getline(ss, qid, ',');
+            std::getline(ss, choice_answer, ',');
+            std::getline(ss, judge_answer, ',');
+            std::getline(ss, subject_answer, ',');
+            std::getline(ss, mark, ',');
+            
+            Answer tmp;
+            tmp.answer_sheet_id_ = std::stoi(aid);
+            tmp.question_id_ = std::stoi(qid);
+            if(!choice_answer.empty()) tmp.answer_context_ = std::stoi(choice_answer);
+            if(!judge_answer.empty())  tmp.answer_context_ = (bool)std::stoi(judge_answer);
+            if(!subject_answer.empty()) tmp.answer_context_ = subject_answer;
+            tmp.mark_ = std::stoi(mark);
+
+            records.push_back(tmp);
+        }
     } else {
         perror("open answer csv.");
         exit(-1);
     }
     return records;
 }
-void WriteAnswerSheetCSV(std::vector<Answer> &) {
-
+void DataBaseService::WriteAnswerCSV(std::vector<Answer> &answer_list) {
+    std::ofstream file(answer_csv);
+    if (file) {
+        for(const auto& a: answer_list) {
+            if (std::holds_alternative<int>(a.answer_context_)) {
+                int value = std::get<int>(a.answer_context_);
+                file << a.answer_sheet_id_ << ","
+                    << a.question_id_ << ","
+                    << value << ","
+                    << ","
+                    << ","
+                    << a.mark_
+                    << std::endl;
+            }
+            else if (std::holds_alternative<bool>(a.answer_context_)) {
+                double value = std::get<bool>(a.answer_context_);
+                file << a.answer_sheet_id_ << ","
+                    << a.question_id_ << ","
+                    << ","
+                    << value << ","
+                    << ","
+                    << a.mark_
+                    << std::endl;
+            }
+            else if (std::holds_alternative<std::string>(a.answer_context_)) {
+                std::string value = std::get<std::string>(a.answer_context_);
+                file << a.answer_sheet_id_ << ","
+                    << a.question_id_ << ","
+                    << ","
+                    << ","
+                    << value << ","
+                    << a.mark_
+                    << std::endl;
+            }
+        
+        }
+        file.close();
+    }
 }
 
-std::vector<AnswerSheet> ReadAnswerSheetCSV() {
+std::vector<AnswerSheet> DataBaseService::ReadAnswerSheetCSV() {
+    std::vector<Answer> a_list = ReadAnswerCSV();
     std::vector<AnswerSheet> records;
     std::ifstream file(answersheet_csv);
     if (file) {
@@ -483,14 +530,40 @@ std::vector<AnswerSheet> ReadAnswerSheetCSV() {
                 std::getline(ss, pid, ',');
                 std::getline(ss, uid, ',');
                 std::getline(ss, total_mark, ',');
-                // TODO
+            
+                AnswerSheet tmp;
+                tmp.answer_sheet_id_ = std::stoi(aid);
+                tmp.paper_id_ = std::stoi(pid);
+                tmp.student_id_ = std::stoi(uid);
+                for(const auto& a: a_list) {
+                    if(a.answer_sheet_id_ == tmp.answer_sheet_id_) {
+                        tmp.answer_list_.push_back(a);
+                    }
+                }
+                tmp.total_mark_ = 0;
+                for(const auto& a:tmp.answer_list_) {
+                    tmp.total_mark_ += a.mark_;
+                }
+                if(std::stoi(total_mark) != tmp.total_mark_) abort();
+                
+                records.push_back(tmp);
             }
     } else {
-        perror("open answer csv.");
+        perror("open answer sheet csv.");
         exit(-1);
     }
     return records;
 }
-void WriteAnswerSheetCSV(std::vector<AnswerSheet> &) {
-
+void DataBaseService::WriteAnswerSheetCSV(std::vector<AnswerSheet> &records) {
+    std::ofstream file(answersheet_csv);
+    if (file) {
+        for (const auto& record : records) {
+            file<< record.answer_sheet_id_ << ","
+                << record.paper_id_<< ","
+                << record.student_id_<< ","
+                << record.total_mark_
+                << std::endl;
+        }
+        file.close();
+    }
 }

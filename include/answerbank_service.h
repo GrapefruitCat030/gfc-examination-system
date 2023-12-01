@@ -4,32 +4,31 @@
 #include "database_service.h"
 #include "log_service.h"
 
-// Teacher Interface: 改卷
 class IAnswerBankServiceTeacher {
 public:
     virtual ~IAnswerBankServiceTeacher() {};
     virtual void ViewAnswerList(){};
-    virtual void ChooseAnswer(){};
     virtual void CorrectAnswer(){};
 };
-// Student Interface: 答卷，查看成绩
 class IAnswerBankServiceStudent {
 public:
     virtual ~IAnswerBankServiceStudent() {};
     virtual void StartAnswer(){};
-    virtual AnswerSheet ViewResult() = 0;
+    virtual void ViewResult() {};
 };
 class AnswerBankService : public IAnswerBankServiceTeacher, public IAnswerBankServiceStudent {
 public:
     DataBaseService *db_service_; 
     LogService      *log_service_;
+    std::vector<Answer> answer_list_;
+    std::vector<AnswerSheet> answer_sheet_list_;
+
     AnswerBankService(DataBaseService *, LogService *);
 
     // Teacher Interface
     void ViewAnswerList() override;
-    void ChooseAnswer() override;
     void CorrectAnswer() override;
     // Student Interface
     void StartAnswer() override;
-    AnswerSheet ViewResult() override;
+    void ViewResult() override;
 };	

@@ -3,7 +3,6 @@
 #include<iostream>
 #include<limits>
 
-
 User::User() {
 
 }
@@ -97,10 +96,6 @@ void Admin::ScheduleMenu() {
         else return;
     }
 }
-
-
-
-
 
 Teacher::Teacher(User *base, DataBaseService *dbs, LogService *lgs) :   User(*base) {
     schedule_service_ = new ScheduleService(dbs, lgs);
@@ -209,15 +204,10 @@ void Teacher::AnswerBankMenu() {
         /* Choose Service */
         int rc = (input[0]) - '0';
         if(rc == 1)      answer_bank_service_->ViewAnswerList();
-        else if(rc == 2) answer_bank_service_->ChooseAnswer();
+        else if(rc == 2) answer_bank_service_->CorrectAnswer();
         else return;
     }
 }
-
-
-
-
-
 
 Student::Student(User *base, DataBaseService *dbs, LogService *lgs) : User(*base) {
     schedule_service_ = new ScheduleService(dbs, lgs);
@@ -257,22 +247,23 @@ void Student::ScheduleMenu() {
                      ;
         getchar();
 }
-void Student::AnswerBankMenu() {}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+void Student::AnswerBankMenu() {
+    while(true) {
+        std::cout << "This is Answer Bank Menu.\n"
+                     "Choose your service:\n"
+                     "1.Start Answer 2.View Result\n"
+                     ">>> "
+                     ;
+        std::string input;
+        std::cin >> input;  // 获取并返回第一个字符
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // 清除输入缓冲区
+        std::cout << std::endl;
+        
+        /* Choose Service */
+        int rc = (input[0]) - '0';
+        if(rc == 1)      answer_bank_service_->StartAnswer();
+        else if(rc == 2) answer_bank_service_->ViewResult();
+        else return;
+    }
+}
 
